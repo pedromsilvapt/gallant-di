@@ -1,0 +1,26 @@
+{
+  "name": "@gallant/di",
+  "version": "0.0.1",
+  "description": "Straighforward Dependency Injection for Typescript/JavaScript applications",
+  "main": "./lib/main.js",
+  "types": "./lib/main.d.ts",
+  "repository": "GallantWeb/di",
+  "keywords": [
+    "dependency injection",
+    "di",
+    "inversion of control",
+    "services",
+    "injector",
+    "javascript",
+    "typescript"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Pedro M. Silva <pemiolsi@hotmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "data-collectors": "^1.0.1",
+    "reflect-metadata": "^0.1.13"
+  }
+}
