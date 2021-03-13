@@ -8,13 +8,13 @@ export class FactoryProvider<T> extends Provider<T> {
 
     readonly cacheable : boolean;
 
-    constructor ( token : any, factory : ( ...args : any[] ) => T, dependencies : any[] = [], cacheable : boolean = false ) {
+    constructor ( token : any, factory : ( ...args : any[] ) => T, dependencies : any[] = [], scope : number = 0 ) {
         super();
 
         this.token = token;
         this.factory = factory;
         this.dependencies = dependencies;
-        this.cacheable = cacheable;
+        this.scope = scope;
     }
 
     public resolve ( injector : Injector ) {

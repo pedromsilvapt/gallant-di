@@ -6,10 +6,12 @@ export class ValueProvider<T> extends Provider<T> {
 
     value : any;
 
-    constructor ( token : any, value : T ) {
+    constructor ( token : any, value : T, scope = 0 ) {
         super();
+
         this.token = token;
         this.value = value;
+        this.scope = scope;
     }
 
     public resolve ( injector : Injector ) {

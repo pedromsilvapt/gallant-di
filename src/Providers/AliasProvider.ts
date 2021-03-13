@@ -14,13 +14,13 @@ export class AliasProvider<T> extends Provider<T> {
 
     readonly cacheable : boolean;
 
-    constructor ( token : any, alias : any, flags : InjectFlags = InjectFlags.Default, cacheable : boolean = false ) {
+    constructor ( token : any, alias : any, flags : InjectFlags = InjectFlags.Default, scope : number = 0 ) {
         super();
 
         this.token = token;
         this.alias = alias;
         this.flags = flags;
-        this.cacheable = cacheable;
+        this.scope = scope;
     }
 
     public resolve ( injector : Injector ) : T {

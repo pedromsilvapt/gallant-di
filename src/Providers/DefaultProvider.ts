@@ -8,11 +8,12 @@ export class DefaultProvider<T> extends Provider<T> {
         return false;
     }
 
-    constructor ( provider : Provider<T> ) {
+    constructor ( provider : Provider<T>, scope : number = 0 ) {
         super();
 
         this.token = provider.token;
         this.provider = provider;
+        this.scope = scope;
     }
 
     resolve ( injector : Injector ) : T {

@@ -19,13 +19,13 @@ export class ClassProvider<T> extends Provider<T> {
 
     protected instance : T = null;
 
-    constructor ( token : any, classConstructor : Class<T>, singleton : boolean = true, args : any[] = [] ) {
+    constructor ( token : any, classConstructor : Class<T>, args : any[] = [], scope : number = 0 ) {
         super();
 
         this.token = token;
         this.classConstructor = classConstructor;
         this.args = args;
-        this.singleton = singleton;
+        this.scope = scope;
     }
 
     public resolveDependency ( injector : Injector, dependency : InjectOptions, self ?: T ) : any {
@@ -66,7 +66,7 @@ export class ClassProvider<T> extends Provider<T> {
     }
 
     public mixArguments ( dependencies : [ number, any ][], inputArgs : any[] ) : any[] {
-        inputArgs = [].slice();
+        inputArgs = inputArgs.slice();
 
         const args : any[] = [];
 
@@ -84,15 +84,13 @@ export class ClassProvider<T> extends Provider<T> {
 
             lastIndex += 1;
         }
+
+        args.push( ...inputArgs );
         
         return args;
     }
 
     public resolve ( injector : Injector ) : T {
-        if ( this.instance != null ) {
-            return this.instance;
-        }
-
         const args = this.mixArguments( this.resolveAllDependencies( injector, this.getConstructorDependencies() ), this.args );
 
         const instance = new this.classConstructor( ...args );
@@ -122,10 +120,6 @@ export class ClassProvider<T> extends Provider<T> {
 
                 ( instance as any )[ hook.member ]( ...hookArgs );
             }
-        }
-
-        if ( this.singleton ) {
-            this.instance = instance;
         }
 
         return instance;
