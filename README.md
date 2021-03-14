@@ -1,15 +1,15 @@
-# @gallantjs/di
+# @gallant/di
 
 > Straighforward Dependency Injection for Typescript/JavaScript applications
 
 # Installation
 ```shell
-npm install --save @gallantjs/di
+npm install --save @gallant/di
 ```
 
 # Usage
 ```typescript
-import { Injector, Inject } from '@gallantjs/di';
+import { Injector, Inject } from '@gallant/di';
 
 class TransportLayer {
     // ...

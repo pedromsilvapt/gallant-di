@@ -1,4 +1,4 @@
-import { Injector, Inject } from '@gallantjs/di';
+import { Injector, Inject } from '@gallant/di';
 import { assert } from 'node:console';
 
 // See https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.servicelifetime

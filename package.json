@@ -1,6 +1,6 @@
 {
-  "name": "@gallantjs/di",
-  "version": "0.0.1",
+  "name": "@gallant/di",
+  "version": "0.0.2",
   "description": "Straighforward Dependency Injection for Typescript/JavaScript applications",
   "main": "./lib/main.js",
   "types": "./lib/main.d.ts",
@@ -20,7 +20,8 @@
   "author": "Pedro M. Silva <pemiolsi@hotmail.com>",
   "license": "ISC",
   "dependencies": {
-    "data-collectors": "^1.0.1",
+    "@gallant/annotate": "0.0.1",
+    "data-collectors": "^1.0.4",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
