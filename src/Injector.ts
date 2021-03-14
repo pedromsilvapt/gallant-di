@@ -3,6 +3,7 @@ import { ClassProvider, Class } from './Providers/ClassProvider';
 import { ValueProvider } from './Providers/ValueProvider';
 import { TaggedProvider } from './Providers/TaggedProvider';
 import { Scope } from './Scope';
+import { MethodInjector } from './MethodInjector';
 
 interface Cached<T> {
     value : T;
@@ -72,6 +73,12 @@ export class BaseInjector {
     protected add ( provider : Class<any> | Provider<any> ) : void {
         if ( !( provider instanceof Provider ) ) {
             provider = new ClassProvider( provider, provider ) as Provider<any>;
+        }
+
+        // When a provider is registered with a scope lower than 0, it means
+        // the scope should be the same as the injector's scope
+        if ( provider.scope < 0 ) {
+            provider.scope = this.scope.id;
         }
 
         this.providers.set( provider.token, provider );
@@ -178,7 +185,6 @@ export class BaseInjector {
         }
 
         let [ owner, injector, provider, value, cached ] = match;
-        console.log( owner.scope.id, injector.scope.id, this.scope.id, provider, value, cached );
 
         // We either return a provider or a value
         // So if we got a provider, it means we have got to resolve it first
@@ -220,7 +226,7 @@ export class BaseInjector {
     }
 
     public create<T> ( constructor : Class<T>, args : any[] = [], flags : InjectFlags = InjectFlags.Default ) : T {
-        return new ClassProvider( constructor, constructor, args ).resolve( this );
+        return new ClassProvider( constructor, constructor, 0, args ).resolve( this );
     }
 
     public createChild ( providers : ( Class<any> | Provider<any> )[] = [], scope : boolean | number | Scope = false ) : BaseInjector {
@@ -239,6 +245,12 @@ export class BaseInjector {
         } else {
             throw new InvalidTagProviderError( tag );
         }
+    }
+
+    public call<T, M extends keyof T> ( objectClass: T, method: M, ...manualArgs: any[]) : T[M] extends ((...args: any[]) => (infer R)) ? R : string;
+    public call<T, M extends keyof T> ( objectClass: Class<T>, method: null | undefined, ...manualArgs: any[]) : T;
+    public call<T, M extends keyof T> ( objectClass: T | Class<T>, method: M, ...manualArgs: any[]) : any {
+        return MethodInjector.call( this, objectClass as any, method, manualArgs );
     }
 }
 
@@ -269,6 +281,10 @@ export class Injector extends BaseInjector {
 
     public static createChild ( providers : ( Class<any> | Provider<any> )[] ) : BaseInjector {
         return this.main.createChild( providers );
+    }
+
+    public static createRoot ( providers : ( Class<any> | Provider<any> )[], scope: number = -1 ) {
+        return new BaseInjector( providers, null, scope );
     }
 
     public static add ( provider : Class<any> | Provider<any> ) : void {

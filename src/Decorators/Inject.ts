@@ -23,7 +23,7 @@ export function isParameterDecorator ( args : any ) : args is ParameterDecorator
     return args.length == 3 && typeof args[ 2 ] === "number";
 }
 
-export var InjectSchema = Annotate.schema<InjectOptions>( Symbol( 'Inject' ) , true, injectMerger, injectIdentity );
+export var InjectSchema = Annotate.schema<InjectOptions>( Symbol( 'Inject' ), true, injectMerger, injectIdentity );
 
 export interface InjectOptions {
     token ?: any;
@@ -86,7 +86,7 @@ export function InjectWith ( options : InjectOptions | any[] = {} ) {
             options = { ...options, parameter: index };
 
             if ( !options.token ) {
-                options = { ...options, token: ( Reflect.getMetadata( 'design:paramtypes', target ) || [] )[ index ] };
+                options = { ...options, token: ( Reflect.getMetadata( 'design:paramtypes', target, method ) || [] )[ index ] };
             }
 
             Annotate.add( target, method, InjectSchema, options );

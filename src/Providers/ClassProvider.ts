@@ -1,10 +1,10 @@
 import { Provider } from './Provider';
-import { Injector, InjectFlags } from '../Injector';
+import { Injector } from '../Injector';
 import { Annotate } from '@gallant/annotate';
-import { InjectSchema, InjectOptions, FactorySchema } from '../Decorators';
-import { collect, sorting, groupingBy, mapping, first } from 'data-collectors';
-import { ValueProvider } from './ValueProvider';
-import { HookSchema, Hook } from '../Decorators/Hook';
+import { InjectSchema, FactorySchema } from '../Decorators';
+import { collect, groupingBy, mapping, first } from 'data-collectors';
+import { HookSchema } from '../Decorators/Hook';
+import { MethodInjector } from '../MethodInjector';
 
 export interface Class<T> {
     new ( ...args : any[] ) : T;
@@ -19,90 +19,43 @@ export class ClassProvider<T> extends Provider<T> {
 
     protected instance : T = null;
 
-    constructor ( token : any, classConstructor : Class<T>, args : any[] = [], scope : number = 0 ) {
+    constructor ( token : Class<T>, scope ?: number, args ?: any[] );
+    constructor ( token : any, classConstructor : Class<T>, scope ?: number, args ?: any[] );
+    constructor ( token : any | Class<T>, classConstructor : Class<T> | number, scope : number | any[] = -1, args : any[] = [] ) {
         super();
 
+        if ( classConstructor == null ) {
+            classConstructor = token;
+        }
+
+        if ( typeof classConstructor === 'number' ) {
+            args = scope as any[];
+            scope = classConstructor as number;
+            classConstructor = token;
+        }
+
         this.token = token;
-        this.classConstructor = classConstructor;
+        this.classConstructor = classConstructor as any;
         this.args = args;
-        this.scope = scope;
-    }
-
-    public resolveDependency ( injector : Injector, dependency : InjectOptions, self ?: T ) : any {
-        if ( dependency.provideSelf ) {
-            if ( !self ) {
-                throw new Error( `Cannot provide self for a constructor dependency in ${ this.token } ${ this.classConstructor }.` );
-            }
-
-            injector = injector.createChild( [ new ValueProvider( this.classConstructor, self ) ] );
-        }
-
-        if ( dependency.provides ) {
-            injector = injector.createChild( dependency.provides );
-        }
-
-        let value = dependency.args instanceof Array
-            ? injector.create( dependency.token, dependency.args, dependency.flags || InjectFlags.Default )
-            : injector.get( dependency.token, dependency.flags || InjectFlags.Default );
-
-        if ( dependency.flags & InjectFlags.Optional && value === null && 'defaultValue' in dependency ) {
-            value = dependency.defaultValue;
-        }
-
-        return value;
-    }
-
-    public resolveAllDependencies ( injector : Injector, dependencies : InjectOptions[], self ?: T ) : [ number, any ][] {
-        return dependencies.map( dep => [ dep.parameter, this.resolveDependency( injector, dep, self ) ] as any );
-    }
-
-    public getConstructorDependencies () : InjectOptions[] {
-        // TODO this.classConstructor[ Injector.dependencies ]
-        return Annotate.getForClass( this.classConstructor, InjectSchema ).map( ann => ann.metadata );
-    }
-    
-    public getMemberDependencies ( member : string | symbol ) : InjectOptions[] {
-        return Annotate.getForMember( this.classConstructor, member, InjectSchema ).map( ann => ann.metadata );
-    }
-
-    public mixArguments ( dependencies : [ number, any ][], inputArgs : any[] ) : any[] {
-        inputArgs = inputArgs.slice();
-
-        const args : any[] = [];
-
-        let lastIndex = 0;
-
-        for ( let [ index, value ] of dependencies ) {
-            while ( typeof index === 'number' && lastIndex < index ) {
-                if ( inputArgs.length > 0 ) args.push( inputArgs.shift() );
-                else args.push( null );
-
-                lastIndex += 1;
-            }
-
-            args.push( value );
-
-            lastIndex += 1;
-        }
-
-        args.push( ...inputArgs );
-        
-        return args;
+        this.scope = scope as number;
     }
 
     public resolve ( injector : Injector ) : T {
-        const args = this.mixArguments( this.resolveAllDependencies( injector, this.getConstructorDependencies() ), this.args );
+        const args = MethodInjector.resolve( injector, this.classConstructor, null, this.args );
 
         const instance = new this.classConstructor( ...args );
 
         const memberAnnotations = collect( 
-            Annotate.get( this.classConstructor.prototype, InjectSchema ).filter( ann => ann.member != null ),
+            // When member is null, we're talking about constructors.
+            // When parameter is not null, we're talking about method parameter injectors
+            Annotate.get( this.classConstructor.prototype, InjectSchema ).filter( ann => ann.member != null && ann.metadata.parameter == null ),
             groupingBy( ann => ann.member, mapping( ann => ann.metadata, first() ) )
         );
 
         for ( let [ member, annotation ] of memberAnnotations ) {
+            // && typeof ( instance as any )[ member ] !== 'function'
             if ( Annotate.getForMember( this.classConstructor.prototype, member, HookSchema ).length === 0 ) {
-                ( instance as any )[ member ] = this.resolveDependency( injector, annotation, instance );
+                ( instance as any )[ member ] = MethodInjector.resolveDependency( injector, this.classConstructor, annotation, instance );
             }
         }
 
@@ -116,7 +69,7 @@ export class ClassProvider<T> extends Provider<T> {
 
         for ( let hook of hooks ) {
             if ( hook.metadata.name === 'init' ) {
-                const hookArgs = this.resolveAllDependencies( injector, this.getMemberDependencies( hook.member ), instance );
+                const hookArgs = MethodInjector.resolve( injector, this.classConstructor, hook.member, [], instance );
 
                 ( instance as any )[ hook.member ]( ...hookArgs );
             }

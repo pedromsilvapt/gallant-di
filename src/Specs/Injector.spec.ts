@@ -29,7 +29,7 @@ test( 'creating a simple class', function ( t ) {
 
 test( 'resolving a transient class twice', function ( t ) {
     const injector = new Injector( [
-        new ClassProvider( TestClass, TestClass, [ 1 ], TestScopes.Transient )
+        new ClassProvider( TestClass, TestClass, TestScopes.Transient, [ 1 ] )
     ] );
 
     const instance1 = injector.get( TestClass );
@@ -47,7 +47,7 @@ test( 'resolving a transient class twice', function ( t ) {
 
 test( 'resolving a singleton class', function ( t ) {
     const injector = new Injector( [
-        new ClassProvider( TestClass, TestClass, [ 1 ], TestScopes.Singleton )
+        new ClassProvider( TestClass, TestClass, TestScopes.Singleton, [ 1 ] )
     ] );
 
     const instance1 = injector.get( TestClass );
@@ -65,7 +65,7 @@ test( 'resolving a singleton class', function ( t ) {
 
 test( 'resolving a singleton class from different child injectors', function ( t ) {
     const injector = new Injector( [
-        new ClassProvider( TestClass, TestClass, [ 1 ], TestScopes.Singleton )
+        new ClassProvider( TestClass, TestClass, TestScopes.Singleton, [ 1 ] )
     ] );
 
     const injector1 = injector.createChild( [], TestScopes.ChildScope );
@@ -89,7 +89,7 @@ test( 'resolving a singleton class from different child injectors', function ( t
 
 test( 'resolving a child scope class from different child injectors', function ( t ) {
     const injector = new Injector( [
-        new ClassProvider( TestClass, TestClass, [ 1 ], TestScopes.ChildScope )
+        new ClassProvider( TestClass, TestClass, TestScopes.ChildScope, [ 1 ] )
     ] );
 
     const injector1 = injector.createChild( [], TestScopes.ChildScope );
@@ -113,10 +113,10 @@ test( 'resolving a child scope class from different child injectors', function (
 
 test( 'resolving an overriden child scope class from different child injectors', function ( t ) {
     const injector = new Injector( [
-        new ClassProvider( TestClass, TestClass, [ 1 ], TestScopes.ChildScope )
+        new ClassProvider( TestClass, TestClass, TestScopes.ChildScope, [ 1 ] )
     ] );
 
-    const injector2 = injector.createChild( [ new ClassProvider( TestClass, TestClass, [ 2 ], TestScopes.ChildScope ) ], true );
+    const injector2 = injector.createChild( [ new ClassProvider( TestClass, TestClass, TestScopes.ChildScope, [ 2 ] ) ], true );
     const injector1 = injector.createChild( [], true );
 
     const instance1 = injector1.get( TestClass );
@@ -137,7 +137,7 @@ test( 'resolving an overriden child scope class from different child injectors',
 
 test( 'resolving a child scoped from a global injector should throw', function ( t ) {
     const injector = new Injector( [
-        new ClassProvider( TestClass, TestClass, [ 1 ], TestScopes.ChildScope )
+        new ClassProvider( TestClass, TestClass, TestScopes.ChildScope, [ 1 ] )
     ] );
 
     t.throws( () => injector.get( TestClass ), 'Cannot instantiate child scoped provider' );

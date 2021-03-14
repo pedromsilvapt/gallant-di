@@ -4,7 +4,8 @@ import { MutableInjector, Injector } from '../Injector';
 export interface InjectableOptions {
     token ?: any;
     tags ?: any[];
-    injector ?: MutableInjector
+    scope ?: number;
+    injector ?: MutableInjector;
 }
 
 export var InjectableSchema = Annotate.schema<InjectableOptions>( Symbol( 'Injectable' ) );
@@ -21,7 +22,7 @@ export function Injectable ( options : InjectableOptions = {} ) {
             injector = options.injector;
         }
 
-        injector.set( options.token, constructor );
+        injector.set( options.token, constructor, options.scope ?? -1 );
 
         if ( options.tags ) {
             for ( let tag of options.tags ) {
