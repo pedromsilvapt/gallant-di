@@ -29,5 +29,7 @@ export function Injectable ( options : InjectableOptions = {} ) {
                 injector.tag( tag, [ options.token ] );
             }
         }
+
+        Annotate.add( constructor, InjectableSchema, options );
     };
 }

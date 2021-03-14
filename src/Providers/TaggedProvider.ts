@@ -6,12 +6,12 @@ export class TaggedProvider<T = any> extends Provider<T[]> {
 
     items : Set<any>;
     
-    constructor ( token : any, inherit : boolean = true, scope : number = 0 ) {
+    constructor ( token : any, services: any[] = [], inherit : boolean = true, scope : number = 0 ) {
         super();
 
         this.token = token;
         this.inherit = inherit;
-        this.items = new Set();
+        this.items = new Set( services );
         this.scope = scope;
     }
 

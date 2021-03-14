@@ -283,7 +283,7 @@ export class Injector extends BaseInjector {
         return this.main.createChild( providers );
     }
 
-    public static createRoot ( providers : ( Class<any> | Provider<any> )[], scope: number = -1 ) {
+    public static createRoot ( providers : ( Class<any> | Provider<any> )[] = [], scope: number = -1 ) {
         return new BaseInjector( providers, null, scope );
     }
 
