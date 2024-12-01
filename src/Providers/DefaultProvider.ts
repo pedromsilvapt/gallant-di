@@ -3,12 +3,12 @@ import { Injector, InjectFlags } from '../Injector';
 
 export class DefaultProvider<T> extends Provider<T> {
     provider : Provider<T>;
-    
+
     get cacheable () : boolean {
         return false;
     }
 
-    constructor ( provider : Provider<T>, scope : number = 0 ) {
+    constructor ( provider : Provider<T>, scope : number = - 1 ) {
         super();
 
         this.token = provider.token;

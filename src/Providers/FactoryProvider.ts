@@ -8,7 +8,7 @@ export class FactoryProvider<T> extends Provider<T> {
 
     readonly cacheable : boolean;
 
-    constructor ( token : any, factory : ( ...args : any[] ) => T, dependencies : any[] = [], scope : number = 0 ) {
+    constructor ( token : any, factory : ( ...args : any[] ) => T, dependencies : any[] = [], scope : number = -1 ) {
         super();
 
         this.token = token;
@@ -18,6 +18,6 @@ export class FactoryProvider<T> extends Provider<T> {
     }
 
     public resolve ( injector : Injector ) {
-        return this.factory( this.dependencies.map( token => injector.get( token ) ) );
+        return this.factory( ...this.dependencies.map( token => injector.get( token ) ) );
     }
 }

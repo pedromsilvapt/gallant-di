@@ -21,7 +21,7 @@ export class ClassProvider<T> extends Provider<T> {
 
     constructor ( token : Class<T>, scope ?: number, args ?: any[] );
     constructor ( token : any, classConstructor : Class<T>, scope ?: number, args ?: any[] );
-    constructor ( token : any | Class<T>, classConstructor : Class<T> | number, scope : number | any[] = -1, args : any[] = [] ) {
+    constructor ( token : any | Class<T>, classConstructor ?: Class<T> | number | undefined, scope ?: number | any[] | undefined, args ?: any[] | undefined ) {
         super();
 
         if ( classConstructor == null ) {
@@ -36,8 +36,8 @@ export class ClassProvider<T> extends Provider<T> {
 
         this.token = token;
         this.classConstructor = classConstructor as any;
-        this.args = args;
-        this.scope = scope as number;
+        this.args = args ?? [];
+        this.scope = scope as number ?? -1;
     }
 
     public resolve ( injector : Injector ) : T {
@@ -45,7 +45,7 @@ export class ClassProvider<T> extends Provider<T> {
 
         const instance = new this.classConstructor( ...args );
 
-        const memberAnnotations = collect( 
+        const memberAnnotations = collect(
             // When member is null, we're talking about constructors.
             // When parameter is not null, we're talking about method parameter injectors
             Annotate.get( this.classConstructor.prototype, InjectSchema ).filter( ann => ann.member != null && ann.metadata.parameter == null ),

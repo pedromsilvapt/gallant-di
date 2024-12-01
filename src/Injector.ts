@@ -2,7 +2,7 @@ import { Provider } from './Providers/Provider';
 import { ClassProvider, Class } from './Providers/ClassProvider';
 import { ValueProvider } from './Providers/ValueProvider';
 import { TaggedProvider } from './Providers/TaggedProvider';
-import { Scope } from './Scope';
+import { InjectorScopes, Scope } from './Scope';
 import { MethodInjector } from './MethodInjector';
 
 interface Cached<T> {
@@ -42,7 +42,7 @@ export class BaseInjector {
     public scope : Scope;
 
     /**
-     * In order to avoid going up the injectors' tree, cache 
+     * In order to avoid going up the injectors' tree, cache
      */
     protected providersCache ?: Map<any, Cached<Provider<any>>> = new Map();
 
@@ -116,7 +116,7 @@ export class BaseInjector {
                 return [ located.owner, located.injector, located.value, null, true ];
             }
         }
-        
+
         if ( this.providers.has( token ) ) {
             return [ this, this, this.providers.get( token ), null, false ];
         }
@@ -204,7 +204,7 @@ export class BaseInjector {
                 this.providersCache.set( token, { owner: owner, injector: this, value: provider } );
             }
         }
-        
+
         const cachedInjector = provider == null && cached;
         const cachedHere = cachedInjector && owner == this;
 
@@ -283,7 +283,7 @@ export class Injector extends BaseInjector {
         return this.main.createChild( providers );
     }
 
-    public static createRoot ( providers : ( Class<any> | Provider<any> )[] = [], scope: number = -1 ) {
+    public static createRoot ( providers : ( Class<any> | Provider<any> )[] = [], scope: number = InjectorScopes.Singleton ) {
         return new BaseInjector( providers, null, scope );
     }
 

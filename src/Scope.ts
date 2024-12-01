@@ -19,7 +19,7 @@ export class Scope {
             throw new Error( `Negative valued scopes are not valid.` );
         }
 
-        if ( scope.id <= parentScope?.id ?? 0 ) {
+        if ( scope.id < ( parentScope?.id ?? 0 ) ) {
             throw new Error( `Cannot create child scope "${ scope.id }" for parent with larger scope "${ parentScope?.id }"` )
         }
 

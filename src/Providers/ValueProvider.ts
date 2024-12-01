@@ -6,7 +6,7 @@ export class ValueProvider<T> extends Provider<T> {
 
     value : any;
 
-    constructor ( token : any, value : T, scope = 0 ) {
+    constructor ( token : any, value : T, scope = -1 ) {
         super();
 
         this.token = token;

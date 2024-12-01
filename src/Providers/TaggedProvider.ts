@@ -5,8 +5,8 @@ export class TaggedProvider<T = any> extends Provider<T[]> {
     inherit : boolean;
 
     items : Set<any>;
-    
-    constructor ( token : any, services: any[] = [], inherit : boolean = true, scope : number = 0 ) {
+
+    constructor ( token : any, services: any[] = [], inherit : boolean = true, scope : number = -1 ) {
         super();
 
         this.token = token;
