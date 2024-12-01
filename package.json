@@ -1,6 +1,6 @@
 {
   "name": "@gallant/di",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Straighforward Dependency Injection for Typescript/JavaScript applications",
   "main": "./lib/main.js",
   "types": "./lib/main.d.ts",
@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@types/tape": "^4.13.0",
+    "tap-dot": "^2.0.0",
     "tape": "^5.0.1"
   }
 }
