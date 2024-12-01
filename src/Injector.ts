@@ -26,7 +26,13 @@ export enum InjectFlags {
 
 export class TokenNotFoundError extends Error {
     constructor ( token : any ) {
-        super( `Could not retrieve the dependency for token ${ token }.` );
+        if ( token == null ) {
+            super( `Could not retrieve the dependency for token '${ token }'. Tip: If you are just setting up the project, make sure you have the flag "emitDecoratorMetadata" set to \`true\` in your 'tsconfig.json' file!` );
+        } else if ( token.constructor?.name != null ) {
+            super( `Could not retrieve the dependency for token '${ token.constructor.name }'.` );
+        } else {
+            super( `Could not retrieve the dependency for token '${ token }'.` );
+        }
     }
 }
 
