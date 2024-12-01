@@ -28,8 +28,8 @@ export class TokenNotFoundError extends Error {
     constructor ( token : any ) {
         if ( token == null ) {
             super( `Could not retrieve the dependency for token '${ token }'. Tip: If you are just setting up the project, make sure you have the flag "emitDecoratorMetadata" set to \`true\` in your 'tsconfig.json' file!` );
-        } else if ( token.constructor?.name != null ) {
-            super( `Could not retrieve the dependency for token '${ token.constructor.name }'.` );
+        } else if ( typeof token === 'function' && typeof token.name == "string" ) {
+            super( `Could not retrieve the dependency for token '${ token.name }'.` );
         } else {
             super( `Could not retrieve the dependency for token '${ token }'.` );
         }
